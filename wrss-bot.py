@@ -50,7 +50,7 @@ async def thread_handler(message):
     thread_name = get_thread_name(message.content)
     if (thread_name is not None) :
         thread = await message.create_thread(name = thread_name)
-        await thread.send('<@&' + config.notify_role_id + '>\nreactions:')
+        await thread.send(f'<@&{config.notify_role_id}>\nreactions:')
 
 async def reaction_change_handler(payload):
     if payload.user_id == client.user.id:
@@ -86,7 +86,7 @@ async def update_reaction_msg(message):
     reaction_msg = await get_reaction_msg(message)
     if reaction_msg is not None:
         reaction_msg_conent = reactions_to_str(reactions)
-        await reaction_msg.edit(content=('<@&' + config.notify_role_id + '>\n' + reaction_msg_conent))
+        await reaction_msg.edit(content=(f'<@&{config.notify_role_id}>\n' + reaction_msg_conent))
 
 
 
