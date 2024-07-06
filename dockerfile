@@ -10,4 +10,4 @@ COPY requirements.txt /app
 
 RUN python3 -m pip install -r requirements.txt
 
-CMD [ "python", "./wrss-bot.py"]
+CMD [ "python", "-u", "./wrss-bot.py"]
