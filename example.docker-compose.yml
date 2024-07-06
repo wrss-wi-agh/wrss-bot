@@ -1,0 +1,14 @@
+version: "3.8"
+
+services:
+  discord-bot:
+    image: matikd/wrss-bot:latest
+    build: .
+    environment:
+      - SEEN_EMOJI_LONG_ID=<your_seen_emoji_long_id>
+      - DOODLE_CHANNEL_ID=<your_doodle_channel_id>
+      - DOODLE_SEEN_REACTION=<your_doodle_seen_reaction>
+      - NOTIFY_ROLE_ID=<your_notify_role_id>
+      - DISCORD_CLIENT_TOKEN=<your_discord_client_token>
+      - DOODLE_LINKS=<comma_separated_doodle_links>
+    restart: unless-stopped
