@@ -1,4 +1,6 @@
 config.py
 venv
 docker-compose.yml
+.envrc
 __pycache__
+.idea
