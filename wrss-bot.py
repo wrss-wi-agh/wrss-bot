@@ -3,9 +3,12 @@ import traceback
 import logging
 import re
 import time
-import config
+import settings
 
+intents = discord.Intents.default()
+intents.message_content = True
 
+client = discord.Client(intents=intents)
 
 async def new_message_handler(message):
     if message.author == client.user:
@@ -13,25 +16,24 @@ async def new_message_handler(message):
     if message.position is None:
         try:
             await thread_handler(message)
-            await message.add_reaction(config.seen_emoji_long_id)
+            await message.add_reaction(settings.seen_emoji_long_id)
         except Exception:
             logging.error(traceback.format_exc())
     elif get_thread_name(message.content) == '[cd]':
         try:
-            await message.add_reaction(config.seen_emoji_long_id)
+            await message.add_reaction(settings.seen_emoji_long_id)
         except Exception:
             logging.error(traceback.format_exc())
     time.sleep(0.5)
     await doodle_handler(message)
     await poll_handler(message)
 
-
 async def doodle_handler(message):
-    for doodle_link in config.doodle_links:
-        if (doodle_link in message.content):
-            channel = client.get_channel(config.doodle_channel_id)
+    for doodle_link in settings.doodle_links:
+        if doodle_link in message.content:
+            channel = client.get_channel(settings.doodle_channel_id)
             new_message = await channel.send(message.jump_url + '\n>>> ' + message.content)
-            await new_message.add_reaction(config.doodle_seen_reaction)
+            await new_message.add_reaction(settings.doodle_seen_reaction)
 
 async def poll_handler(message):
     options = re.findall(r'> - .+', message.content)
@@ -41,16 +43,15 @@ async def poll_handler(message):
 
 def get_option_emoji(option_string):
     emoji = option_string[4:].split()[0]
-    if (emoji[0] == '<' and emoji[-1] == '>'):
+    if emoji[0] == '<' and emoji[-1] == '>':
         emoji = emoji[1:-1]
     return emoji
 
-
 async def thread_handler(message):
     thread_name = get_thread_name(message.content)
-    if (thread_name is not None) :
+    if thread_name is not None:
         thread = await message.create_thread(name = thread_name)
-        await thread.send(f'<@&{config.notify_role_id}>\nreactions:')
+        await thread.send(f'<@&{settings.notify_role_id}>\nreactions:')
 
 async def reaction_change_handler(payload):
     if payload.user_id == client.user.id:
@@ -58,8 +59,6 @@ async def reaction_change_handler(payload):
     message = await client.get_channel(payload.channel_id).fetch_message(payload.message_id)
     if message.position is None:
        await update_reaction_msg(message)
-
-
 
 def get_thread_name(message_content):
     title = re.search(r'\[[^\]]*\]', message_content)
@@ -76,25 +75,16 @@ async def get_reaction_msg(message):
     if thread is None:
         return
     messages = [message async for message in thread.history(limit=2, oldest_first=True)]
-    if (len(messages) < 2 or messages[1].author != client.user):
+    if len(messages) < 2 or messages[1].author != client.user:
         return None
     return messages[1]
-
 
 async def update_reaction_msg(message):
     reactions = message.reactions
     reaction_msg = await get_reaction_msg(message)
     if reaction_msg is not None:
-        reaction_msg_conent = reactions_to_str(reactions)
-        await reaction_msg.edit(content=(f'<@&{config.notify_role_id}>\n' + reaction_msg_conent))
-
-
-
-
-intents = discord.Intents.default()
-intents.message_content = True
-
-client = discord.Client(intents=intents)
+        reaction_msg_content = reactions_to_str(reactions)
+        await reaction_msg.edit(content=(f'<@&{settings.notify_role_id}>\n' + reaction_msg_content))
 
 @client.event
 async def on_ready():
@@ -112,5 +102,4 @@ async def on_raw_reaction_add(payload):
 async def on_raw_reaction_remove(payload):
     await reaction_change_handler(payload)
 
-
-client.run(config.client_token)
+client.run(settings.client_token)

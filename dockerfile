@@ -5,9 +5,9 @@ LABEL Maintainer="wrss.wiet"
 WORKDIR /app
 
 COPY wrss-bot.py /app
-COPY config.py /app
+COPY settings.py /app
 COPY requirements.txt /app 
 
 RUN python3 -m pip install -r requirements.txt
 
-CMD [ "python", "./wrss-bot.py"]
+CMD [ "python", "-u", "./wrss-bot.py"]
