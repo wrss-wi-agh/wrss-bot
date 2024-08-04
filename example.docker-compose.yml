@@ -7,7 +7,7 @@ services:
     environment:
       - SEEN_EMOJI_LONG_ID=<your_seen_emoji_long_id>
       - DOODLE_CHANNEL_ID=<your_doodle_channel_id>
-      - DOODLE_SEEN_REACTION='✅'
+      - DOODLE_SEEN_REACTION=0x2705   # unicode character
       - NOTIFY_ROLE_ID=<your_notify_role_id>
       - DISCORD_CLIENT_TOKEN=<your_discord_client_token>
       - DOODLE_LINKS=https://doodle.com/meeting/participate,https://lettucemeet.com
